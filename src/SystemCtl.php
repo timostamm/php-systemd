@@ -210,7 +210,7 @@ class SystemCtl
             return true;
         }
         if ($value === 'no') {
-            return true;
+            return false;
         }
         $msg = sprintf('Unable to parse %s property %s as boolean from value "%s".', $unit, $property, $value);
         throw new UnexpectedValueException($msg);
