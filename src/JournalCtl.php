@@ -23,10 +23,10 @@ class JournalCtl
     private $commandTimeout;
 
     /** @var string[] */
-    private $outputFields;
+    private $outputFields = [];
 
     /** @var bool */
-    private $utc;
+    private $utc = false;
 
     /** @var string */
     private $output = 'short';
