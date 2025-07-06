@@ -10,6 +10,8 @@ namespace TS\PhpSystemD;
 
 use RuntimeException;
 use Symfony\Component\Process\Process;
+use TS\PhpSystemD\Process\DefaultProcessFactory;
+use TS\PhpSystemD\Process\ProcessFactory;
 
 
 class JournalCtl
@@ -43,16 +45,21 @@ class JournalCtl
     /** @var string|null */
     private $afterCursor;
 
+    /** @var ProcessFactory */
+    private $processFactory;
+
 
     /**
      * JournalCtl constructor.
      * @param string $command
      * @param float $commandTimeout
+     * @param ProcessFactory|null $processFactory
      */
-    public function __construct(string $command = 'journalctl', float $commandTimeout = 60)
+    public function __construct(string $command = 'journalctl', float $commandTimeout = 60, ProcessFactory $processFactory = null)
     {
         $this->command = $command;
         $this->commandTimeout = $commandTimeout;
+        $this->processFactory = $processFactory ?: new DefaultProcessFactory();
     }
 
     /**
@@ -205,7 +212,7 @@ class JournalCtl
             array_push($commandline, ...$args);
         }
 
-        return new Process($commandline, null, null, null, $this->commandTimeout);
+        return $this->processFactory->create($commandline, null, null, null, $this->commandTimeout);
     }
 
 

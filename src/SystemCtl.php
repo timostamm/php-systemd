@@ -11,6 +11,8 @@ namespace TS\PhpSystemD;
 use DateTimeImmutable;
 use LogicException;
 use Symfony\Component\Process\Process;
+use TS\PhpSystemD\Process\DefaultProcessFactory;
+use TS\PhpSystemD\Process\ProcessFactory;
 use UnexpectedValueException;
 
 class SystemCtl
@@ -23,16 +25,21 @@ class SystemCtl
     /** @var float */
     private $commandTimeout;
 
+    /** @var ProcessFactory */
+    private $processFactory;
+
 
     /**
      * SystemCtl constructor.
      * @param string $command
      * @param float $commandTimeout
+     * @param ProcessFactory|null $processFactory
      */
-    public function __construct(string $command = 'systemctl', float $commandTimeout = 60)
+    public function __construct(string $command = 'systemctl', float $commandTimeout = 60, ProcessFactory $processFactory = null)
     {
         $this->command = $command;
         $this->commandTimeout = $commandTimeout;
+        $this->processFactory = $processFactory ?: new DefaultProcessFactory();
     }
 
 
@@ -221,7 +228,7 @@ class SystemCtl
     {
         $commandline = [$this->command];
         array_push($commandline, ...$args);
-        $process = new Process($commandline, null, null, null, $this->commandTimeout);
+        $process = $this->processFactory->create($commandline, null, null, null, $this->commandTimeout);
         $process->run();
         return $process;
     }

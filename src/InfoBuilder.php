@@ -10,12 +10,13 @@ namespace TS\PhpSystemD;
 
 
 use LogicException;
-use Symfony\Component\Process\Process;
 use TS\PhpSystemD\Info\AbstractUnitInfo;
 use TS\PhpSystemD\Info\MemoryInfo;
 use TS\PhpSystemD\Info\ServiceInfo;
 use TS\PhpSystemD\Info\TimerInfo;
 use TS\PhpSystemD\Info\UptimeInfo;
+use TS\PhpSystemD\Process\DefaultProcessFactory;
+use TS\PhpSystemD\Process\ProcessFactory;
 use UnexpectedValueException;
 
 class InfoBuilder
@@ -30,22 +31,27 @@ class InfoBuilder
     /** @var SystemCtl */
     private $systemCtl;
 
+    /** @var ProcessFactory */
+    private $processFactory;
+
     /**
      * InfoBuilder constructor.
      * @param SystemCtl $systemCtl
+     * @param ProcessFactory|null $processFactory
      */
-    public function __construct(SystemCtl $systemCtl)
+    public function __construct(SystemCtl $systemCtl, ProcessFactory $processFactory = null)
     {
         $this->systemCtl = $systemCtl;
+        $this->processFactory = $processFactory ?: new DefaultProcessFactory();
     }
 
 
     public function uptime(): UptimeInfo
     {
-        $process = new Process(['uptime', '-p']);
+        $process = $this->processFactory->create(['uptime', '-p']);
         $uptimePretty = trim($process->mustRun()->getOutput());
 
-        $process = new Process(['uptime']);
+        $process = $this->processFactory->create(['uptime']);
         $output = $process->mustRun()->getOutput();
         $ok = preg_match(self::RE_UPTIME_LOAD, $output, $matches);
         if ($ok === false) {
@@ -71,7 +77,7 @@ class InfoBuilder
 
     public function memory(): MemoryInfo
     {
-        $process = new Process(['free', '--bytes']);
+        $process = $this->processFactory->create(['free', '--bytes']);
         $process->mustRun();
         $output = $process->getOutput();
         $ok = preg_match(self::RE_MEM, $output, $matches);
