@@ -92,7 +92,7 @@ class SystemCtl
     {
         $process = $this->runProcess(['restart', $unit]);
         if (!$process->isSuccessful()) {
-            $msg = sprintf('Unable to start %s: %s', $unit, $process->getErrorOutput());
+            $msg = sprintf('Unable to restart %s: %s', $unit, $process->getErrorOutput());
             throw new UnexpectedValueException($msg);
         }
     }
