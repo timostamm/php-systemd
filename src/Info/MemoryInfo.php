@@ -26,17 +26,17 @@ class MemoryInfo
 
     /**
      * MemoryInfo constructor.
-     * @param int $totalKb
-     * @param int $usedKb
-     * @param int $swapTotalKb
-     * @param int $swapUsedKb
+     * @param int $totalBytes
+     * @param int $usedBytes
+     * @param int $swapTotalBytes
+     * @param int $swapUsedBytes
      */
-    public function __construct(int $totalKb, int $usedKb, int $swapTotalKb, int $swapUsedKb)
+    public function __construct(int $totalBytes, int $usedBytes, int $swapTotalBytes, int $swapUsedBytes)
     {
-        $this->totalBytes = $totalKb;
-        $this->usedBytes = $usedKb;
-        $this->swapTotalBytes = $swapTotalKb;
-        $this->swapUsedBytes = $swapUsedKb;
+        $this->totalBytes = $totalBytes;
+        $this->usedBytes = $usedBytes;
+        $this->swapTotalBytes = $swapTotalBytes;
+        $this->swapUsedBytes = $swapUsedBytes;
     }
 
     /**
